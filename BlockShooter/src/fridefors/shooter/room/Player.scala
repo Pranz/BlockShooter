@@ -12,8 +12,8 @@ class Player(val rm: Room, var position: Vector) extends Entity {
   val airFactor = 0.1f
   val runFactor = 2f
   val jumpPower = 7f
-  val jumpDelay = 15
-  val maxJumps = 1
+  val jumpDelay = 0
+  val maxJumps = 3
   val airJumpPower = 4f
   val spd = 0.3f
   val maxSpd = 2f

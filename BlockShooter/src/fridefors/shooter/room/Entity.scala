@@ -25,7 +25,7 @@ abstract class Entity extends Physical {
     spdFactor.update
     speed.update
     maxSpeed.update
-    effectiveFriction = friction * (if (onGround) 1 else airFactor)
+    effectiveFriction = friction * (if (onGround) 1 else 0)
     if(onGround) currentJumps = maxJumps
     if(!walks){
       if(math.abs(velocity.x) <= effectiveFriction)velocity = velocity withX (0)
