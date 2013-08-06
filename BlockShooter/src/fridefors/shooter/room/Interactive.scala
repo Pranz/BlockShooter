@@ -5,6 +5,8 @@ import collection.mutable.ListBuffer
 trait Interactive extends Agent {
   
   var position : Vector // [px]
+  var previousPosition = position
+  def deltaPosition = position - previousPosition
   val box : Rectangle
   val boxOffset : Vector //how much the hit box is offset from center of position.
   
@@ -12,13 +14,23 @@ trait Interactive extends Agent {
   def solid = sld
   def solid_= : Boolean => Unit = p => if (p != sld) {
     sld = p //setter
-    if(p) Interactive.solids += this
-    else Interactive.solids  -= this
+    if(p) rm.solids += this
+    else rm.solids  -= this
   }
   
   def update() {
     val PositionalVector(x,y) = position + boxOffset
     box.setLocation(x,y)
+  }
+  
+  override def init() {
+    rm.interactives += this
+    super.init()
+  }
+  
+  override def destroy() {
+    rm.interactives -= this
+    super.destroy()
   }
   
   def render(g: org.newdawn.slick.Graphics){
@@ -43,9 +55,4 @@ trait Interactive extends Agent {
   
   def anyMeeting[A <: Interactive](dx: Float, dy: Float, lst: ListBuffer[A]) = !(objectMeeting (dx,dy,lst) isEmpty)
   
-}
-
-object Interactive {
-  val all    = ListBuffer[Interactive]()
-  val solids = ListBuffer[Interactive]()
 }

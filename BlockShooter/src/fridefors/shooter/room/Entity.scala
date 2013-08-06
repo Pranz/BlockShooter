@@ -1,5 +1,5 @@
 package fridefors.shooter.room
-import fridefors.general.{Direction, Vector, Right, TimeVarying, Alarm}
+import fridefors.general.{Direction, NoDir, Vector, Right, TimeVarying, Alarm}
 abstract class Entity extends Physical {
   val maxSpd : Float   // [px/f]
   val spd    : Float   // [px/f]
@@ -40,7 +40,7 @@ abstract class Entity extends Physical {
     super.update()
   }
   
-  def walk(dir: Direction): Unit = if (canMove){
+  def walk(dir: Direction): Unit = if (canMove && dir != NoDir){
     walks = true
     walkingDir = dir
     if(math.signum(dir.vector.x) == math.signum(velocity.x) && math.abs(velocity.x + speed.get * dir.vector.x) >= math.abs(maxSpeed.get)){
@@ -76,6 +76,29 @@ abstract class Entity extends Physical {
       velocity = velocity withX xVel
       canMove = true
     })
+  }
+  
+  def moveX(dx: Float) {
+    if(!anyMeeting(dx,0,rm.solids)) position += Vector(dx,0)
+    else {
+      moveUntilStop(Direction horizontal dx)
+      velocity = velocity withX 0
+      acceleration = acceleration withX 0
+    }
+  }
+  
+  def moveY(dy: Float) {
+    if(!anyMeeting(0,dy,rm.solids)) position += Vector(0,dy)
+    else {
+      moveUntilStop(Direction vertical dy)
+      velocity = velocity withY 0
+      acceleration = acceleration withY 0
+    }
+  }
+  
+  override def move(dpos: Vector) {
+    moveX(dpos.x)
+    moveY(dpos.y)
   }
   
 }

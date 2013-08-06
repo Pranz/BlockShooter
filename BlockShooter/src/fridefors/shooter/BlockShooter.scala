@@ -2,7 +2,7 @@ package fridefors.shooter
 
 import org.newdawn.slick.{ Game, AppGameContainer, Graphics, GameContainer, Input }
 import fridefors.general.{Alarm, Vector, DoWhile}
-import fridefors.shooter.room.{Room, Player}
+import fridefors.shooter.room.{Room, Player, GeneralEnemy, GameState}
 import terrain.Block
 /*
  * 
@@ -12,36 +12,23 @@ import terrain.Block
 class BlockShooter extends Game {
   def closeRequested(): Boolean = true
   def getTitle(): String = BlockShooter.TITLE
-  var rm: Room = null
-  var player: Player = null
 
   def init(container: GameContainer): Unit = {
     BlockShooter.input = container.getInput()
-    rm = new Room()
-    new Block(rm, Vector(50, 400), 16, 2)
-    player = new Player(rm, Vector(100,200))
+    GameState.changeState(() => {
+      val st = new TestRoom()
+      st.init()
+      st
+    })
   }
   def update(container: GameContainer, delta: Int): Unit = {
     Alarm.all.clone foreach (_.update())
     DoWhile.all.clone foreach (_.update())
-    rm.update()
+    GameState.update()
   }
   def render(container: GameContainer, g: Graphics): Unit = {
-    val debugList = List( 
-      "x: " + player.position.x
-    , "y: " + player.position.y
-    , "vel.x: " + player.velocity.x
-    , "vel.y: " + player.velocity.y
-    , "on ground: " + player.onGround
-    , "speed factor: " + player.spdFactor.get
-    , "objects: " + rm.agents.toString
-    , "alarms: "  + Alarm.all.toString
-    , "dowhile: " + DoWhile.all.toString
-    )
-    for (i <- 0 to debugList.length - 1){
-      g.drawString(debugList(i), 8, 8 + i*12)
-    }
-    rm.render(g)
+    
+    GameState.render(g)
   }
 }
 
@@ -67,5 +54,17 @@ object Main {
     val container = BlockShooter.createGameContainer()
     container start
 
+  }
+}
+
+class TestRoom extends Room(){
+  def init(){
+    val player = new Player(this, Vector(100,200))
+    players = List(player)
+    new Block(this, Vector(50, 400), 16, 1)
+    new Block(this, Vector(100, 320), 2, 2)
+    new Block(this, Vector(200, 250), 1, 1)
+    new Block(this, Vector(300, 340), 6, 1)
+    new GeneralEnemy(this, Vector(400, 200))
   }
 }

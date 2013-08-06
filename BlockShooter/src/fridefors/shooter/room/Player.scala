@@ -24,10 +24,7 @@ class Player(val rm: Room, var position: Vector) extends Entity {
     if(BlockShooter.input.isKeyDown(Input.KEY_LEFT))  walk(Left)
     if(BlockShooter.input.isKeyDown(Input.KEY_RIGHT)) walk(Right)
     if(BlockShooter.input.isKeyPressed (Input.KEY_X)) jump()
-    if(BlockShooter.input.isKeyPressed(Input.KEY_P)) {
-      var i = 0
-      new DoWhile({BlockShooter.input.isKeyDown(Input.KEY_P)}, {i += 1}, {println(i.toString)})
-    }
+    if(BlockShooter.input.isKeyPressed(Input.KEY_R)) GameState.reset()
     super.update()
   }
   
